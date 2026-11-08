@@ -1,0 +1,2822 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpyHub 2.0 — Web Utilities & Productivity Suite</title>
+    <meta name="description" content="SpyHub 2.0: Platform kurasi 50+ web tools profesional, konverter data, utilitas teks, dan tools produktivitas ringkas.">
+    <meta name="theme-color" content="#101113">
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            /* Dark Palette (Default) */
+            --bg-primary: #101113;
+            --bg-secondary: #181A1D;
+            --card-bg: #1D2024;
+            --card-hover: #23272C;
+            --border-color: #2B2E33;
+            --border-subtle: #1F2226;
+            --text-primary: #F5F5F5;
+            --text-secondary: #92979F;
+            --text-tertiary: #656A73;
+            --accent: #B7D7C2;
+            --accent-hover: #9fcbb0;
+            --accent-rgb: 183, 215, 194;
+            --accent-subtle: rgba(183, 215, 194, 0.08);
+            --accent-border: rgba(183, 215, 194, 0.25);
+            --danger: #E06C75;
+            --danger-bg: rgba(224, 108, 117, 0.1);
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.5);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-full: 9999px;
+            --nav-height: 68px;
+            --container-max: 1240px;
+            --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #F7F8FA;
+            --bg-secondary: #FFFFFF;
+            --card-bg: #FFFFFF;
+            --card-hover: #F2F4F7;
+            --border-color: #E2E4E9;
+            --border-subtle: #EEF0F3;
+            --text-primary: #16181D;
+            --text-secondary: #5E6573;
+            --text-tertiary: #92979F;
+            --accent: #3A7D58;
+            --accent-hover: #2F6948;
+            --accent-rgb: 58, 125, 88;
+            --accent-subtle: rgba(58, 125, 88, 0.08);
+            --accent-border: rgba(58, 125, 88, 0.25);
+            --danger: #D13B44;
+            --danger-bg: rgba(209, 59, 68, 0.08);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 6px 20px -3px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 16px 36px -4px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, input, textarea {
+            font-family: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Subtle grid background */
+        .grid-texture {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(to right, var(--border-subtle) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--border-subtle) 1px, transparent 1px);
+            background-size: 56px 56px;
+            opacity: 0.35;
+            z-index: 0;
+        }
+
+        /* ==================== 1. SPLASH INTRO SCREEN ==================== */
+        #splashScreen {
+            position: fixed;
+            inset: 0;
+            background: #101113;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #splashScreen.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .splash-core {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .sp-logo-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sp-box-outline {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
+            background: rgba(29, 32, 36, 0.4);
+            transform: scale(0.8);
+            opacity: 0;
+            animation: boxAppear 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+        }
+
+        .sp-char {
+            font-family: var(--font-mono);
+            font-size: 52px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            position: absolute;
+        }
+
+        .sp-char.char-s {
+            color: #F5F5F5;
+            left: 24px;
+            transform: translate(-90px, -70px) rotate(-35deg) scale(0.4);
+            opacity: 0;
+            animation: mergeLeft 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+        }
+
+        .sp-char.char-p {
+            color: #B7D7C2;
+            right: 24px;
+            transform: translate(90px, 70px) rotate(35deg) scale(0.4);
+            opacity: 0;
+            animation: mergeRight 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+        }
+
+        @keyframes mergeLeft {
+            0% { transform: translate(-100px, -80px) rotate(-40deg) scale(0.3); opacity: 0; }
+            60% { transform: translate(4px, 0) rotate(5deg) scale(1.08); opacity: 1; }
+            100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+        }
+
+        @keyframes mergeRight {
+            0% { transform: translate(100px, 80px) rotate(40deg) scale(0.3); opacity: 0; }
+            60% { transform: translate(-4px, 0) rotate(-5deg) scale(1.08); opacity: 1; }
+            100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+        }
+
+        @keyframes boxAppear {
+            to { transform: scale(1); opacity: 1; border-color: rgba(183, 215, 194, 0.35); }
+        }
+
+        .splash-brand-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeText 0.5s ease 0.9s forwards;
+        }
+
+        .splash-brand-name {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+            color: #F5F5F5;
+        }
+
+        .splash-brand-tag {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: var(--accent);
+            background: var(--accent-subtle);
+            border: 1px solid var(--accent-border);
+            padding: 2px 7px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+        }
+
+        @keyframes fadeText {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dual-loading-track {
+            position: relative;
+            width: 260px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .loading-half {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            background: #B7D7C2;
+            width: 0%;
+        }
+
+        .loading-half.left-half {
+            left: 0;
+            border-radius: 4px 0 0 4px;
+            animation: loadToCenterLeft 1.2s cubic-bezier(0.65, 0, 0.35, 1) 0.9s forwards;
+        }
+
+        .loading-half.right-half {
+            right: 0;
+            border-radius: 0 4px 4px 0;
+            animation: loadToCenterRight 1.2s cubic-bezier(0.65, 0, 0.35, 1) 0.9s forwards;
+        }
+
+        @keyframes loadToCenterLeft {
+            0% { width: 0%; }
+            100% { width: 50%; }
+        }
+
+        @keyframes loadToCenterRight {
+            0% { width: 0%; }
+            100% { width: 50%; }
+        }
+
+        .splash-status {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #656A73;
+            letter-spacing: 0.5px;
+            opacity: 0;
+            animation: fadeText 0.5s ease 1s forwards;
+        }
+
+        /* ==================== 2. LOBY OTENTIKASI ==================== */
+        #authLobby {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        #authLobby.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 440px;
+            padding: 32px 28px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            animation: authPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes authPop {
+            from { opacity: 0; transform: translateY(14px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .auth-logo-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            margin-bottom: 12px;
+        }
+
+        .auth-logo-badge span {
+            font-family: var(--font-mono);
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .auth-logo-badge span em {
+            color: var(--accent);
+            font-style: normal;
+        }
+
+        .auth-title {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+            margin-bottom: 6px;
+        }
+
+        .auth-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 4px;
+            margin-bottom: 22px;
+            gap: 4px;
+        }
+
+        .auth-tab-btn {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .auth-tab-btn.active {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.2px;
+        }
+
+        .input-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-box i {
+            position: absolute;
+            left: 14px;
+            color: var(--text-tertiary);
+            font-size: 16px;
+        }
+
+        .input-box input {
+            width: 100%;
+            height: 44px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0 14px 0 42px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .input-box input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-subtle);
+        }
+
+        .auth-submit-btn {
+            width: 100%;
+            height: 46px;
+            background: var(--accent);
+            color: #101113;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 6px;
+            transition: var(--transition);
+        }
+
+        .auth-submit-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 18px 0;
+            color: var(--text-tertiary);
+            font-size: 11px;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+        }
+
+        .auth-divider::before, .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .guest-btn {
+            width: 100%;
+            height: 42px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .guest-btn:hover {
+            background: var(--bg-secondary);
+            border-color: var(--text-tertiary);
+        }
+
+        /* Notice Banner for Guest Mode */
+        .guest-mode-banner {
+            background: rgba(224, 108, 117, 0.12);
+            border-bottom: 1px solid rgba(224, 108, 117, 0.25);
+            padding: 8px 16px;
+            font-size: 12px;
+            color: #F5A3AA;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 101;
+        }
+
+        .guest-mode-banner.active {
+            display: flex;
+        }
+
+        .guest-banner-action {
+            background: var(--accent);
+            color: #101113;
+            border: none;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        /* ==================== 3. MAIN DASHBOARD CONTENT ==================== */
+        #mainAppWrapper {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        #mainAppWrapper.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: var(--nav-height);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 19px;
+            letter-spacing: -0.4px;
+            cursor: pointer;
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            display: grid;
+            place-items: center;
+            color: var(--accent);
+            font-size: 16px;
+            font-family: var(--font-mono);
+            font-weight: 800;
+            transition: var(--transition);
+        }
+
+        .brand-logo em {
+            color: var(--text-primary);
+            font-style: normal;
+        }
+
+        .brand:hover .brand-logo {
+            border-color: var(--accent-border);
+            transform: translateY(-1px);
+        }
+
+        .brand-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: var(--radius-full);
+            background: var(--accent-subtle);
+            color: var(--accent);
+            border: 1px solid var(--accent-border);
+            font-family: var(--font-mono);
+            letter-spacing: 0.3px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            list-style: none;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .nav-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .nav-btn.active {
+            color: var(--text-primary);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-btn .fav-counter {
+            font-size: 11px;
+            padding: 1px 6px;
+            border-radius: var(--radius-full);
+            background: var(--border-color);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Music Player Button */
+        .music-btn {
+            height: 38px;
+            padding: 0 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .music-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-border);
+        }
+
+        .music-btn.playing {
+            color: var(--accent);
+            border-color: var(--accent-border);
+            background: var(--accent-subtle);
+        }
+
+        .music-bars {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 14px;
+        }
+
+        .music-bar {
+            width: 2.5px;
+            background: var(--text-tertiary);
+            height: 4px;
+            border-radius: 1px;
+            transition: var(--transition);
+        }
+
+        .music-btn.playing .music-bar {
+            background: var(--accent);
+            animation: bounceBar 0.8s ease infinite alternate;
+        }
+
+        .music-btn.playing .music-bar:nth-child(1) { animation-delay: 0.1s; }
+        .music-btn.playing .music-bar:nth-child(2) { animation-delay: 0.3s; }
+        .music-btn.playing .music-bar:nth-child(3) { animation-delay: 0.2s; }
+
+        @keyframes bounceBar {
+            0% { height: 3px; }
+            100% { height: 14px; }
+        }
+
+        .action-icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            display: grid;
+            place-items: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-icon-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--text-tertiary);
+        }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 5px 12px 5px 6px;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .profile-btn:hover {
+            border-color: var(--accent-border);
+        }
+
+        .profile-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-full);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            display: grid;
+            place-items: center;
+            color: var(--accent);
+            font-size: 14px;
+        }
+
+        .mobile-toggle {
+            display: none;
+        }
+
+        /* Mobile Drawer */
+        .mobile-drawer {
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 24px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 99;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .mobile-drawer.open {
+            display: flex;
+        }
+
+        .mobile-drawer .nav-btn {
+            justify-content: flex-start;
+            padding: 12px 14px;
+            width: 100%;
+            font-size: 15px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            z-index: 1;
+            padding: 56px 0 40px;
+            border-bottom: 1px solid var(--border-color);
+            background: radial-gradient(circle at 50% 0%, rgba(var(--accent-rgb), 0.04) 0%, transparent 70%);
+        }
+
+        .hero-content {
+            max-width: 760px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            background: var(--accent-subtle);
+            border: 1px solid var(--accent-border);
+            padding: 4px 14px;
+            border-radius: var(--radius-full);
+            margin-bottom: 20px;
+            font-family: var(--font-mono);
+            letter-spacing: 0.2px;
+        }
+
+        .hero-title {
+            font-size: 40px;
+            line-height: 1.15;
+            letter-spacing: -1.2px;
+            font-weight: 800;
+            margin-bottom: 14px;
+            color: var(--text-primary);
+        }
+
+        .hero-desc {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            line-height: 1.6;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .search-wrapper {
+            position: relative;
+            max-width: 580px;
+            margin: 0 auto 36px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 20px;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .main-search-input {
+            width: 100%;
+            height: 52px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0 100px 0 52px;
+            color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .main-search-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .main-search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-subtle);
+            background: var(--bg-secondary);
+        }
+
+        .search-shortcut {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-tertiary);
+            padding: 3px 7px;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .hero-stats {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 36px;
+            padding-top: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-family: var(--font-mono);
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 2px;
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 28px;
+            background: var(--border-color);
+        }
+
+        /* Featured Tools */
+        .featured-section {
+            position: relative;
+            z-index: 1;
+            padding: 36px 0 20px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-heading {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-heading i {
+            color: var(--accent);
+        }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .featured-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 16px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .featured-card:hover {
+            border-color: var(--accent-border);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            background: var(--card-hover);
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent);
+            background: var(--accent-subtle);
+            border: 1px solid var(--accent-border);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            font-family: var(--font-mono);
+        }
+
+        .featured-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .featured-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: var(--accent-subtle);
+            border: 1px solid var(--accent-border);
+            display: grid;
+            place-items: center;
+            color: var(--accent);
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .featured-info h3 {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            margin-bottom: 4px;
+        }
+
+        .featured-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        .featured-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .featured-open-btn {
+            color: var(--accent);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition);
+        }
+
+        .featured-card:hover .featured-open-btn {
+            gap: 8px;
+        }
+
+        /* Categories Bar */
+        .catalog-section {
+            position: relative;
+            z-index: 1;
+            padding: 32px 0 80px;
+        }
+
+        .filter-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .category-tabs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding-bottom: 4px;
+        }
+
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-tab {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 7px 14px;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .category-tab:hover {
+            color: var(--text-primary);
+            border-color: var(--text-tertiary);
+        }
+
+        .category-tab.active {
+            background: var(--card-bg);
+            color: var(--accent);
+            border-color: var(--accent-border);
+            font-weight: 600;
+        }
+
+        .category-count {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            opacity: 0.75;
+        }
+
+        .catalog-status {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            font-family: var(--font-mono);
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .tool-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .tool-card:hover {
+            background: var(--card-hover);
+            border-color: var(--border-subtle);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tool-card-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .tool-icon-wrapper {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            display: grid;
+            place-items: center;
+            color: var(--text-primary);
+            font-size: 20px;
+            transition: var(--transition);
+        }
+
+        .tool-card:hover .tool-icon-wrapper {
+            color: var(--accent);
+            border-color: var(--accent-border);
+            background: var(--accent-subtle);
+        }
+
+        .fav-star-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: var(--transition);
+            line-height: 1;
+        }
+
+        .fav-star-btn:hover {
+            color: #E5C07B;
+        }
+
+        .fav-star-btn.active {
+            color: #E5C07B;
+        }
+
+        .tool-card-body h4 {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .tool-card-body p {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.45;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .tool-card-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .tool-cat-tag {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: var(--text-tertiary);
+            background: var(--bg-secondary);
+            padding: 2px 7px;
+            border-radius: 4px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .tool-run-btn {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition);
+        }
+
+        .tool-card:hover .tool-run-btn {
+            color: var(--accent);
+            transform: translateX(2px);
+        }
+
+        /* Empty state */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 64px 20px;
+            background: var(--card-bg);
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            display: none;
+        }
+
+        .empty-state i {
+            font-size: 40px;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .empty-state h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .empty-state p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Modal Tool Detail */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            place-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            display: grid;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            max-width: 500px;
+            width: 100%;
+            padding: 28px;
+            box-shadow: var(--shadow-lg);
+            animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.96) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .modal-icon-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: var(--accent-subtle);
+            border: 1px solid var(--accent-border);
+            color: var(--accent);
+            display: grid;
+            place-items: center;
+            font-size: 24px;
+        }
+
+        .modal-close-icon {
+            background: transparent;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .modal-close-icon:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .modal-category {
+            display: inline-block;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            color: var(--accent);
+            background: var(--accent-subtle);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 14px;
+        }
+
+        .modal-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 22px;
+        }
+
+        .modal-meta-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .modal-meta-box i {
+            color: var(--accent);
+            font-size: 16px;
+        }
+
+        .modal-meta-box.warning {
+            background: var(--danger-bg);
+            border-color: rgba(224, 108, 117, 0.25);
+            color: #F5A3AA;
+        }
+
+        .modal-meta-box.warning i {
+            color: var(--danger);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-accent {
+            flex: 1;
+            background: var(--accent);
+            color: #101113;
+            border: none;
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-accent:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-secondary);
+            border-color: var(--text-tertiary);
+        }
+
+        /* ==================== 4. SPYHUB BOT ASSISTANT (WIDGET) ==================== */
+        .spybot-floating-btn {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 999;
+            background: var(--card-bg);
+            border: 1px solid var(--accent-border);
+            color: var(--text-primary);
+            padding: 10px 16px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .spybot-floating-btn:hover {
+            transform: translateY(-2px);
+            background: var(--bg-secondary);
+            border-color: var(--accent);
+        }
+
+        .spybot-badge-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--accent-subtle);
+            color: var(--accent);
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+        }
+
+        .spybot-floating-btn span {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .spybot-pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        /* Spybot Chat Window */
+        .spybot-window {
+            position: fixed;
+            bottom: 80px;
+            left: 24px;
+            width: 380px;
+            max-width: calc(100vw - 48px);
+            height: 480px;
+            max-height: calc(100vh - 120px);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .spybot-window.open {
+            display: flex;
+        }
+
+        .spybot-head {
+            padding: 14px 18px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .spybot-head-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .spybot-head-title {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .spybot-head-sub {
+            font-size: 11px;
+            color: var(--accent);
+            font-family: var(--font-mono);
+        }
+
+        .spybot-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 13px;
+        }
+
+        .bot-msg {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            line-height: 1.5;
+            color: var(--text-primary);
+            max-width: 90%;
+            align-self: flex-start;
+        }
+
+        .bot-msg strong {
+            color: var(--accent);
+        }
+
+        .user-msg {
+            background: var(--accent-subtle);
+            border: 1px solid var(--accent-border);
+            color: var(--text-primary);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            max-width: 85%;
+            align-self: flex-end;
+        }
+
+        .spybot-quick-chips {
+            padding: 8px 14px;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .spybot-quick-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .quick-chip {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 11px;
+            padding: 5px 10px;
+            border-radius: var(--radius-full);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quick-chip:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .spybot-foot {
+            padding: 10px 14px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+        }
+
+        .spybot-input {
+            flex: 1;
+            height: 38px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0 12px;
+            color: var(--text-primary);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .spybot-input:focus {
+            border-color: var(--accent);
+        }
+
+        .spybot-send-btn {
+            width: 38px;
+            height: 38px;
+            background: var(--accent);
+            color: #101113;
+            border: none;
+            border-radius: var(--radius-sm);
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Footer */
+        .site-footer {
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            padding: 48px 0 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand-col p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 12px;
+            line-height: 1.6;
+            max-width: 320px;
+        }
+
+        .footer-col h5 {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-links a {
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .footer-version {
+            font-family: var(--font-mono);
+            background: var(--bg-primary);
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Toast feedback */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 18px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 999999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast i {
+            color: var(--accent);
+            font-size: 16px;
+        }
+
+        /* Responsive rules */
+        @media (max-width: 1080px) {
+            .tools-grid { grid-template-columns: repeat(3, 1fr); }
+            .featured-grid { grid-template-columns: repeat(2, 1fr); }
+            .featured-grid .featured-card:last-child { grid-column: span 2; }
+        }
+
+        @media (max-width: 768px) {
+            :root { --nav-height: 60px; }
+            .container { padding: 0 16px; }
+            .nav-links, .profile-btn { display: none; }
+            .mobile-toggle { display: grid; }
+            .hero-section { padding: 36px 0 30px; }
+            .hero-title { font-size: 28px; letter-spacing: -0.6px; }
+            .hero-desc { font-size: 14px; margin-bottom: 24px; }
+            .main-search-input { height: 48px; font-size: 14px; padding-right: 50px; }
+            .search-shortcut { display: none; }
+            .hero-stats { gap: 20px; }
+            .stat-number { font-size: 18px; }
+            .featured-grid { grid-template-columns: 1fr; }
+            .featured-grid .featured-card:last-child { grid-column: span 1; }
+            .tools-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .tool-card { padding: 14px; }
+            .tool-card-body h4 { font-size: 14px; }
+            .tool-card-body p { font-size: 12px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+            .auth-card { padding: 24px 20px; }
+            .spybot-floating-btn { bottom: 16px; left: 16px; }
+            .spybot-window { bottom: 72px; left: 16px; width: calc(100vw - 32px); }
+        }
+
+        @media (max-width: 460px) {
+            .tools-grid { grid-template-columns: 1fr; }
+            .music-btn span { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grid-texture"></div>
+
+    <!-- Hidden Audio Player -->
+    <audio id="siteAudio" loop preload="none">
+        <source src="https://files.catbox.moe/hvdozj.mp4" type="audio/mp4">
+    </audio>
+
+    <!-- Guest Mode Warning Banner -->
+    <div class="guest-mode-banner" id="guestBanner">
+        <span><i class="ri-alert-line"></i> <strong>Mode Tamu (Guest Explorer):</strong> Anda hanya dapat melihat katalog tools. Buat akun untuk mencoba & menjalankan fitur tools.</span>
+        <button class="guest-banner-action" onclick="openAuthModalForRegister()">Bikin Akun Sekarang</button>
+    </div>
+
+    <!-- ==================== 1. ANIMASI MASUK (SPLASH SCREEN) ==================== -->
+    <div id="splashScreen">
+        <div class="splash-core">
+            <div class="sp-logo-wrapper">
+                <div class="sp-box-outline"></div>
+                <div class="sp-char char-s">S</div>
+                <div class="sp-char char-p">P</div>
+            </div>
+
+            <div class="splash-brand-text">
+                <span class="splash-brand-name">SpyHub Suite</span>
+                <span class="splash-brand-tag">v2.0</span>
+            </div>
+
+            <div class="dual-loading-track">
+                <div class="loading-half left-half"></div>
+                <div class="loading-half right-half"></div>
+            </div>
+
+            <span class="splash-status">INITIALIZING WORKSPACE...</span>
+        </div>
+    </div>
+
+    <!-- ==================== 2. LOBY MASUK & DAFTAR AKUN ==================== -->
+    <div id="authLobby" class="hide">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo-badge">
+                    <span>S<em>P</em></span>
+                </div>
+                <h2 class="auth-title" id="authTitleText">Masuk ke SpyHub</h2>
+                <p class="auth-subtitle" id="authSubText">Wajib punya akun untuk mencoba dan menjalankan 50+ tools</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">Masuk</button>
+                <button class="auth-tab-btn" id="tabRegisterBtn" onclick="switchAuthTab('register')">Daftar Akun</button>
+            </div>
+
+            <form class="auth-form" id="authForm" onsubmit="handleAuthSubmit(event)">
+                <div class="form-group">
+                    <label for="authUsername">Username / ID</label>
+                    <div class="input-box">
+                        <i class="ri-user-line"></i>
+                        <input type="text" id="authUsername" placeholder="e.g. satrya_dev" required autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="authPassword">Kata Sandi</label>
+                    <div class="input-box">
+                        <i class="ri-lock-2-line"></i>
+                        <input type="password" id="authPassword" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <div class="form-group" id="confirmPassGroup" style="display: none;">
+                    <label for="authConfirmPassword">Konfirmasi Kata Sandi</label>
+                    <div class="input-box">
+                        <i class="ri-shield-keyhole-line"></i>
+                        <input type="password" id="authConfirmPassword" placeholder="••••••••">
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-submit-btn" id="authSubmitBtn">
+                    <span>Masuk ke Dashboard</span>
+                    <i class="ri-arrow-right-line"></i>
+                </button>
+            </form>
+
+            <div class="auth-divider">atau eksplorasi visual</div>
+
+            <button class="guest-btn" onclick="enterAsGuest()">
+                <i class="ri-eye-line"></i>
+                <span>Masuk sebagai Tamu (Hanya Melihat Saja)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== 3. MAIN DASHBOARD APPLICATION ==================== -->
+    <div id="mainAppWrapper">
+        <header class="site-header">
+            <div class="container navbar">
+                <div class="brand" onclick="scrollToTop()">
+                    <div class="brand-logo">
+                        <span><em>S</em>P</span>
+                    </div>
+                    <span>SpyHub</span>
+                    <span class="brand-badge">2.0</span>
+                </div>
+
+                <ul class="nav-links">
+                    <li><button class="nav-btn active" onclick="handleNavClick('home', this)"><i class="ri-home-4-line"></i> Beranda</button></li>
+                    <li><button class="nav-btn" onclick="handleNavClick('all', this)"><i class="ri-grid-line"></i> Semua Tools</button></li>
+                    <li>
+                        <button class="nav-btn" onclick="handleNavClick('favorites', this)">
+                            <i class="ri-star-line"></i> Favorit 
+                            <span class="fav-counter" id="favCounter">0</span>
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="header-actions">
+                    <!-- Audio Player Button -->
+                    <button class="music-btn" id="musicToggleBtn" onclick="toggleAudioPlayback()" title="Putar / Hentikan Musik Latar">
+                        <i class="ri-play-fill" id="musicIcon"></i>
+                        <span>Musik</span>
+                        <div class="music-bars">
+                            <div class="music-bar"></div>
+                            <div class="music-bar"></div>
+                            <div class="music-bar"></div>
+                        </div>
+                    </button>
+
+                    <button class="action-icon-btn" id="searchFocusBtn" title="Fokus Pencarian (Ctrl + K)" onclick="focusSearch()">
+                        <i class="ri-search-line"></i>
+                    </button>
+                    <button class="action-icon-btn" id="themeToggleBtn" title="Ganti Mode Tampilan" onclick="toggleTheme()">
+                        <i class="ri-sun-line" id="themeIcon"></i>
+                    </button>
+                    <button class="profile-btn" onclick="openProfileMenu()">
+                        <div class="profile-avatar"><i class="ri-user-line"></i></div>
+                        <span id="navUsername">Developer</span>
+                    </button>
+                    <button class="action-icon-btn mobile-toggle" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                        <i class="ri-menu-4-line" id="mobileMenuIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mobile-drawer" id="mobileDrawer">
+                <button class="nav-btn active" onclick="handleNavClick('home', this); toggleMobileMenu();"><i class="ri-home-4-line"></i> Beranda</button>
+                <button class="nav-btn" onclick="handleNavClick('all', this); toggleMobileMenu();"><i class="ri-grid-line"></i> Semua Tools</button>
+                <button class="nav-btn" onclick="handleNavClick('favorites', this); toggleMobileMenu();">
+                    <i class="ri-star-line"></i> Favorit Tersimpan (<span id="favCounterMobile">0</span>)
+                </button>
+                <button class="nav-btn" onclick="toggleAudioPlayback(); toggleMobileMenu();">
+                    <i class="ri-music-2-line"></i> Toggle Putar Musik
+                </button>
+                <button class="nav-btn" onclick="toggleSpybot(); toggleMobileMenu();">
+                    <i class="ri-robot-line"></i> Bantuan Bot Web
+                </button>
+                <button class="nav-btn" onclick="logoutSession(); toggleMobileMenu();" style="color: var(--danger);">
+                    <i class="ri-logout-box-r-line"></i> Keluar ke Lobi
+                </button>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero-section" id="heroSection">
+            <div class="container hero-content">
+                <div class="hero-tag">
+                    <i class="ri-shield-check-line"></i> CURATED SUITE &bull; FAST &bull; SECURE
+                </div>
+                <h1 class="hero-title">Everything You Need, In One Place.</h1>
+                <p class="hero-desc">
+                    Platform utilitas web serbaguna untuk produktivitas, konversi format data, inspeksi pengembang, dan generator teks instan tanpa bloatware.
+                </p>
+
+                <div class="search-wrapper">
+                    <i class="ri-search-line search-icon"></i>
+                    <input 
+                        type="text" 
+                        class="main-search-input" 
+                        id="toolSearchInput" 
+                        placeholder="Cari dari 54 tools (e.g. JSON, QR, Base64, Hash)..." 
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                    <span class="search-shortcut">Ctrl K</span>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="statTotalTools">54</span>
+                        <span class="stat-label">Web Tools</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">Kategori</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Client Side</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Tools -->
+        <section class="featured-section" id="featuredSection">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-heading">
+                        <i class="ri-sparkling-fill"></i> Tools Pilihan
+                    </div>
+                    <span class="catalog-status">Direkomendasikan</span>
+                </div>
+
+                <div class="featured-grid">
+                    <div class="featured-card" onclick="openToolModal('jsonfmt')">
+                        <span class="featured-badge">PRO</span>
+                        <div class="featured-top">
+                            <div class="featured-icon"><i class="ri-code-box-line"></i></div>
+                            <div class="featured-info">
+                                <h3>JSON Formatter & Validator</h3>
+                                <p>Validasi skema, indentasi otomatis, dan minifikasi struktur data JSON berkecepatan tinggi.</p>
+                            </div>
+                        </div>
+                        <div class="featured-meta">
+                            <span>Developer</span>
+                            <span class="featured-open-btn">Jalankan <i class="ri-arrow-right-line"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="featured-card" onclick="openToolModal('qr')">
+                        <span class="featured-badge">POPULER</span>
+                        <div class="featured-top">
+                            <div class="featured-icon"><i class="ri-qr-code-line"></i></div>
+                            <div class="featured-info">
+                                <h3>QR Code Studio</h3>
+                                <p>Generate QR code presisi untuk tautan, teks, vCard, atau WiFi dalam format vektor SVG / PNG.</p>
+                            </div>
+                        </div>
+                        <div class="featured-meta">
+                            <span>Generator</span>
+                            <span class="featured-open-btn">Jalankan <i class="ri-arrow-right-line"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="featured-card" onclick="openToolModal('markdown')">
+                        <span class="featured-badge">PRODUKTIF</span>
+                        <div class="featured-top">
+                            <div class="featured-icon"><i class="ri-markdown-line"></i></div>
+                            <div class="featured-info">
+                                <h3>Live Markdown Workspace</h3>
+                                <p>Editor markdown sinkron dua arah dengan rendering tabel, syntax highlight, dan ekspor HTML.</p>
+                            </div>
+                        </div>
+                        <div class="featured-meta">
+                            <span>Productivity</span>
+                            <span class="featured-open-btn">Jalankan <i class="ri-arrow-right-line"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Catalog & Filter Bar -->
+        <main class="catalog-section" id="catalogSection">
+            <div class="container">
+                <div class="filter-toolbar">
+                    <div class="category-tabs" id="categoryTabs">
+                        <button class="category-tab active" data-cat="all" onclick="setCategory('all', this)">
+                            All Tools <span class="category-count">(54)</span>
+                        </button>
+                        <button class="category-tab" data-cat="Productivity" onclick="setCategory('Productivity', this)">
+                            Productivity <span class="category-count">(8)</span>
+                        </button>
+                        <button class="category-tab" data-cat="Developer" onclick="setCategory('Developer', this)">
+                            Developer <span class="category-count">(11)</span>
+                        </button>
+                        <button class="category-tab" data-cat="Converter" onclick="setCategory('Converter', this)">
+                            Converter <span class="category-count">(9)</span>
+                        </button>
+                        <button class="category-tab" data-cat="Generator" onclick="setCategory('Generator', this)">
+                            Generator <span class="category-count">(9)</span>
+                        </button>
+                        <button class="category-tab" data-cat="Utilities" onclick="setCategory('Utilities', this)">
+                            Utilities <span class="category-count">(11)</span>
+                        </button>
+                        <button class="category-tab" data-cat="Entertainment" onclick="setCategory('Entertainment', this)">
+                            Entertainment <span class="category-count">(4)</span>
+                        </button>
+                        <button class="category-tab" data-cat="Others" onclick="setCategory('Others', this)">
+                            Others <span class="category-count">(2)</span>
+                        </button>
+                    </div>
+
+                    <div class="catalog-status" id="catalogCounter">Menampilkan 54 tools</div>
+                </div>
+
+                <div class="tools-grid" id="toolsGrid"></div>
+
+                <div class="empty-state" id="emptyState">
+                    <i class="ri-search-eye-line"></i>
+                    <h3>Tidak ada alat yang cocok</h3>
+                    <p>Coba gunakan kata kunci lain atau pilih kategori "All Tools".</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand-col">
+                        <div class="brand">
+                            <div class="brand-logo"><span><em>S</em>P</span></div>
+                            <span>SpyHub</span>
+                            <span class="brand-badge">v2.0</span>
+                        </div>
+                        <p>
+                            Ekosistem peralatan web modern, aman, dan efisien. Didesain secara fungsional tanpa iklan yang mengganggu atau pelacakan privasi.
+                        </p>
+                    </div>
+
+                    <div class="footer-col">
+                        <h5>Navigasi</h5>
+                        <ul class="footer-links">
+                            <li><a href="#heroSection" onclick="scrollToTop()">Beranda</a></li>
+                            <li><a href="#catalogSection" onclick="handleNavClick('all')">Katalog Semua Tools</a></li>
+                            <li><a href="#catalogSection" onclick="handleNavClick('favorites')">Tools Favorit</a></li>
+                            <li><a href="javascript:void(0)" onclick="toggleSpybot()">Panduan Spybot AI</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-col">
+                        <h5>Kategori</h5>
+                        <ul class="footer-links">
+                            <li><a href="javascript:void(0)" onclick="setCategory('Developer')">Developer Tools</a></li>
+                            <li><a href="javascript:void(0)" onclick="setCategory('Converter')">Data Converters</a></li>
+                            <li><a href="javascript:void(0)" onclick="setCategory('Productivity')">Productivity Suite</a></li>
+                            <li><a href="javascript:void(0)" onclick="setCategory('Utilities')">System Utilities</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-col">
+                        <h5>Akun & Sesi</h5>
+                        <ul class="footer-links">
+                            <li><a href="javascript:void(0)" onclick="openProfileMenu()">Status Sesi Aktif</a></li>
+                            <li><a href="javascript:void(0)" onclick="logoutSession()">Ganti Akun / Keluar</a></li>
+                            <li><a href="javascript:void(0)" onclick="showToast('Zero-Tracker & Client-Side Secure')">Kebijakan Privasi</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <span>&copy; 2026 SpyHub. Seluruh hak cipta dilindungi.</span>
+                    <span class="footer-version">BUILD 2.0.5-RELEASE</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==================== 4. SPYHUB BOT ASSISTANT ==================== -->
+    <div class="spybot-floating-btn" id="spybotToggleBtn" onclick="toggleSpybot()">
+        <div class="spybot-badge-icon">
+            <i class="ri-robot-2-line"></i>
+        </div>
+        <span>Tanya Spybot</span>
+        <div class="spybot-pulse-dot"></div>
+    </div>
+
+    <div class="spybot-window" id="spybotWindow">
+        <div class="spybot-head">
+            <div class="spybot-head-info">
+                <div class="spybot-badge-icon"><i class="ri-robot-2-line"></i></div>
+                <div>
+                    <div class="spybot-head-title">SpyHub Guide Assistant</div>
+                    <div class="spybot-head-sub">AI Virtual Assistant</div>
+                </div>
+            </div>
+            <button class="modal-close-icon" onclick="toggleSpybot()">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+
+        <div class="spybot-messages" id="spybotMessages">
+            <div class="bot-msg">
+                Halo! Saya <strong>Spybot</strong>, asisten pintar SpyHub 2.0. Ada yang bisa saya bantu jelaskan tentang platform ini?
+            </div>
+        </div>
+
+        <div class="spybot-quick-chips">
+            <div class="quick-chip" onclick="askSpybotPreset('Apa itu SpyHub 2.0?')">Apa itu SpyHub?</div>
+            <div class="quick-chip" onclick="askSpybotPreset('Kenapa harus bikin akun?')">Kenapa butuh akun?</div>
+            <div class="quick-chip" onclick="askSpybotPreset('Apa saja kategori tools yang ada?')">Kategori Tools</div>
+            <div class="quick-chip" onclick="askSpybotPreset('Apakah aman dari pelacakan privasi?')">Keamanan Privasi</div>
+        </div>
+
+        <div class="spybot-foot">
+            <input type="text" class="spybot-input" id="spybotInput" placeholder="Ketik pertanyaan seputar SpyHub..." onkeydown="handleBotKey(event)">
+            <button class="spybot-send-btn" onclick="sendSpybotMessage()"><i class="ri-send-plane-fill"></i></button>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL TOOL PREVIEW ==================== -->
+    <div class="modal-overlay" id="toolModal" onclick="closeToolModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-icon-badge" id="modalToolIcon">
+                    <i class="ri-tools-line"></i>
+                </div>
+                <button class="modal-close-icon" onclick="closeToolModal()" title="Tutup Jendela">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <span class="modal-category" id="modalToolCat">UTILITIES</span>
+            <h2 class="modal-title" id="modalToolTitle">Tool Title</h2>
+            <p class="modal-desc" id="modalToolDesc">Deskripsi detail tool akan tampil di sini saat dipilih.</p>
+            
+            <div class="modal-meta-box" id="modalMetaBox">
+                <i class="ri-information-line"></i>
+                <span id="modalMetaText">Tahap 1 Desain Selesai. Workspace interaktif dapat dijalankan oleh akun terdaftar.</span>
+            </div>
+
+            <div class="modal-actions" id="modalActionsBox">
+                <button class="btn-accent" id="modalLaunchBtn" onclick="launchToolAction()">
+                    <i class="ri-play-line"></i> Buka Workspace
+                </button>
+                <button class="btn-outline" onclick="closeToolModal()">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI Toast -->
+    <div class="toast" id="uiToast">
+        <i class="ri-checkbox-circle-fill"></i>
+        <span id="toastMsg">Tindakan berhasil</span>
+    </div>
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script>
+        // DATA KATALOG 54 TOOLS
+        const TOOLS_DATA = [
+            // Productivity (8)
+            { id: 'markdown', name: 'Markdown Editor', desc: 'Editor teks markdown instan dengan preview HTML simultan.', cat: 'Productivity', icon: 'ri-markdown-line' },
+            { id: 'timer', name: 'Countdown Timer', desc: 'Penghitung waktu presisi untuk produktivitas & interval kerja.', cat: 'Productivity', icon: 'ri-timer-line' },
+            { id: 'notes', name: 'Scratchpad Notes', desc: 'Buku catatan lokal instan dengan penyimpanan autosave browser.', cat: 'Productivity', icon: 'ri-file-text-line' },
+            { id: 'wordcount', name: 'Word & Character Counter', desc: 'Analisis panjang teks, frekuensi kata, dan estimasi waktu baca.', cat: 'Productivity', icon: 'ri-text' },
+            { id: 'caseconv', name: 'Case Converter', desc: 'Konversi gaya teks: camelCase, snake_case, UPPERCASE, dan Title Case.', cat: 'Productivity', icon: 'ri-font-size-2' },
+            { id: 'diffchecker', name: 'Text Diff Checker', desc: 'Bandingkan perbedaan baris antara dua teks secara visual berdampingan.', cat: 'Productivity', icon: 'ri-git-commit-line' },
+            { id: 'loremipsum', name: 'Lorem Ipsum Generator', desc: 'Hasilkan teks dummy placeholder berdasarkan paragraf atau kata.', cat: 'Productivity', icon: 'ri-article-line' },
+            { id: 'todo', name: 'Minimalist Task List', desc: 'Daftar checklist to-do list harian ringan tanpa login akun.', cat: 'Productivity', icon: 'ri-checkbox-line' },
+
+            // Developer (11)
+            { id: 'jsonfmt', name: 'JSON Formatter', desc: 'Validasi, beautify, dan minifikasi struktur JSON berukuran besar.', cat: 'Developer', icon: 'ri-code-box-line' },
+            { id: 'cssmin', name: 'CSS Minifier', desc: 'Kompres berkas CSS untuk efisiensi transfer data situs web.', cat: 'Developer', icon: 'ri-css3-line' },
+            { id: 'hashgen', name: 'Hash Generator', desc: 'Generate cryptographic hash MD5, SHA-1, SHA-256, dan SHA-512.', cat: 'Developer', icon: 'ri-fingerprint-line' },
+            { id: 'jwtdecode', name: 'JWT Token Inspector', desc: 'Dekode header dan payload JSON Web Token secara aman di browser.', cat: 'Developer', icon: 'ri-key-2-line' },
+            { id: 'regex', name: 'RegEx Tester', desc: 'Uji regular expression dengan penyorotan pola regex langsung.', cat: 'Developer', icon: 'ri-braces-line' },
+            { id: 'httpheaders', name: 'HTTP Headers Inspector', desc: 'Periksa respons header HTTP, status code, dan security headers.', cat: 'Developer', icon: 'ri-server-line' },
+            { id: 'sqlfmt', name: 'SQL Formatter', desc: 'Format kueri SQL kompleks agar mudah dibaca dan terdokumentasi.', cat: 'Developer', icon: 'ri-database-2-line' },
+            { id: 'htmlescape', name: 'HTML Entity Encoder', desc: 'Encode dan decode entitas HTML untuk mencegah isu parsing XSS.', cat: 'Developer', icon: 'ri-html5-line' },
+            { id: 'cronparser', name: 'Crontab Schedule Explainer', desc: 'Terjemahkan ekspresi cron waktu menjadi jadwal bahasa manusia.', cat: 'Developer', icon: 'ri-calendar-schedule-line' },
+            { id: 'curlconv', name: 'cURL to Fetch Converter', desc: 'Konversi perintah cURL shell ke kode JavaScript fetch atau Axios.', cat: 'Developer', icon: 'ri-terminal-line' },
+            { id: 'whois', name: 'WHOIS & DNS Checker', desc: 'Inspeksi catatan DNS A, MX, TXT, dan domain registrar info.', cat: 'Developer', icon: 'ri-global-line' },
+
+            // Converter (9)
+            { id: 'base64', name: 'Base64 Text/File', desc: 'Encode dan decode teks atau berkas biner ke format Base64.', cat: 'Converter', icon: 'ri-arrow-left-right-line' },
+            { id: 'urlcode', name: 'URL Encoder / Decoder', desc: 'Enkripsi URI percent-encoding untuk parameter link web.', cat: 'Converter', icon: 'ri-links-line' },
+            { id: 'csv2json', name: 'CSV to JSON Converter', desc: 'Ubah file tabular CSV menjadi array JSON secara instan.', cat: 'Converter', icon: 'ri-file-excel-line' },
+            { id: 'json2yaml', name: 'JSON to YAML Converter', desc: 'Konversi konfigurasi antara format YAML dan format JSON.', cat: 'Converter', icon: 'ri-file-code-line' },
+            { id: 'colorconv', name: 'Color HEX to RGB / HSL', desc: 'Konversi kode warna desain grafis antara HEX, RGB, HSV, dan HSL.', cat: 'Converter', icon: 'ri-palette-line' },
+            { id: 'pxrem', name: 'PX to REM Converter', desc: 'Kalkulator konversi ukuran piksel ke unit rem standar CSS font.', cat: 'Converter', icon: 'ri-ruler-line' },
+            { id: 'binhex', name: 'Binary to Hex & Text', desc: 'Konversi nilai biner, heksadesimal, desimal, dan ASCII.', cat: 'Converter', icon: 'ri-binary-line' },
+            { id: 'epochtime', name: 'Unix Timestamp Converter', desc: 'Konversi Epoch Unix timestamp ke tanggal dan waktu lokal.', cat: 'Converter', icon: 'ri-time-line' },
+            { id: 'pdfmerge', name: 'PDF Merger Studio', desc: 'Penggabungan dokumen PDF berhalaman ganda secara lokal.', cat: 'Converter', icon: 'ri-file-pdf-line' },
+
+            // Generator (9)
+            { id: 'qr', name: 'QR Code Generator', desc: 'Buat barcode QR kustom untuk URL, teks, kartu kontak, dan WiFi.', cat: 'Generator', icon: 'ri-qr-code-line' },
+            { id: 'passgen', name: 'Strong Password Generator', desc: 'Hasilkan kata sandi acak dengan standar entropi kriptografi tinggi.', cat: 'Generator', icon: 'ri-lock-password-line' },
+            { id: 'uuidgen', name: 'UUID v4 Generator', desc: 'Hasilkan kumpulan UUID standar RFC4122 tanpa duplikasi.', cat: 'Generator', icon: 'ri-shuffle-line' },
+            { id: 'walink', name: 'Direct WhatsApp Linker', desc: 'Buat link obrolan langsung WhatsApp dengan teks pesan awal.', cat: 'Generator', icon: 'ri-whatsapp-line' },
+            { id: 'metaeditor', name: 'Meta Tag & SEO Generator', desc: 'Hasilkan Open Graph dan Twitter card tags untuk optimasi web.', cat: 'Generator', icon: 'ri-share-forward-box-line' },
+            { id: 'svgpattern', name: 'SVG Background Generator', desc: 'Hasilkan pola geometris SVG modular untuk aset latar situs.', cat: 'Generator', icon: 'ri-shapes-line' },
+            { id: 'useragent', name: 'User-Agent Faker', desc: 'Kumpulan string User-Agent browser terbaru untuk uji responsivitas.', cat: 'Generator', icon: 'ri-computer-line' },
+            { id: 'gradientcss', name: 'CSS Mesh Generator', desc: 'Generator palet gradasi CSS modern dengan kode copy instan.', cat: 'Generator', icon: 'ri-paint-brush-line' },
+            { id: 'barcode', name: 'Code128 Barcode Maker', desc: 'Generate barcode linear standar industri untuk inventaris data.', cat: 'Generator', icon: 'ri-barcode-line' },
+
+            // Utilities (11)
+            { id: 'webstatus', name: 'Website Uptime Checker', desc: 'Uji apakah sebuah domain situs dapat dijangkau dari jaringan.', cat: 'Utilities', icon: 'ri-pulse-line' },
+            { id: 'imgresize', name: 'Image Dimension Scaler', desc: 'Ubah dimensi gambar PNG / JPG dengan kompresi aspek rasio.', cat: 'Utilities', icon: 'ri-aspect-ratio-line' },
+            { id: 'mp3cut', name: 'Audio Snippet Trimmer', desc: 'Pemotong durasi file audio MP3/WAV ringan berbasis WebAudio.', cat: 'Utilities', icon: 'ri-music-2-line' },
+            { id: 'chart', name: 'Quick Chart Creator', desc: 'Visualisasikan data tabel sederhana menjadi grafik bar dan line.', cat: 'Utilities', icon: 'ri-bar-chart-2-line' },
+            { id: 'linkshort', name: 'Quick URL Shortener', desc: 'Peringkas alamat tautan panjang ke format tautan ringkas.', cat: 'Utilities', icon: 'ri-link-m' },
+            { id: 'screenpreview', name: 'Responsive Viewport Test', desc: 'Simulasi resolusi halaman web di viewport desktop, tablet, dan HP.', cat: 'Utilities', icon: 'ri-device-line' },
+            { id: 'tempmail', name: 'Temporary Disposable Inbox', desc: 'Akses kotak masuk email sementara untuk uji terima registrasi.', cat: 'Utilities', icon: 'ri-mail-line' },
+            { id: 'textencrypt', name: 'Client AES Text Locker', desc: 'Enkripsi pesan teks rahasia menggunakan password kata sandi lokal.', cat: 'Utilities', icon: 'ri-shield-keyhole-line' },
+            { id: 'aspectratio', name: 'Aspect Ratio Calculator', desc: 'Hitung rasio proporsi resolusi video dan foto 16:9, 4:3, atau custom.', cat: 'Utilities', icon: 'ri-fullscreen-line' },
+            { id: 'gifmaker', name: 'Frame GIF Animator', desc: 'Rangkai kumpulan gambar berurutan menjadi format file animasi GIF.', cat: 'Utilities', icon: 'ri-film-line' },
+            { id: 'faviconfetch', name: 'Favicon Grabber', desc: 'Ambil ikon favicon resolusi tertinggi dari domain website apa pun.', cat: 'Utilities', icon: 'ri-image-circle-line' },
+
+            // Entertainment (4)
+            { id: 'dice', name: 'Multi-Dice Simulator', desc: 'Lempar dadu simulasi acak dengan dukungan dadu D6, D12, dan D20.', cat: 'Entertainment', icon: 'ri-gamepad-line' },
+            { id: 'coin', name: 'Heads or Tails Flipper', desc: 'Putar koin virtual dengan persentase probabilitas murni 50:50.', cat: 'Entertainment', icon: 'ri-copper-coin-line' },
+            { id: 'drawcanvas', name: 'Freehand Whiteboard', desc: 'Kanvas digital bebas coret untuk sketsa ide dan ekspor PNG.', cat: 'Entertainment', icon: 'ri-edit-line' },
+            { id: 'phonkbeat', name: 'BPM & Beat Tapper', desc: 'Hitung tempo ketukan musik (BPM) secara real-time lewat ketukan jari.', cat: 'Entertainment', icon: 'ri-disc-line' },
+
+            // Others (2)
+            { id: 'ipinfo', name: 'Public IP Echo', desc: 'Lihat informasi alamat IP publik dan status koneksi protokol IPv4/IPv6.', cat: 'Others', icon: 'ri-router-line' },
+            { id: 'usercheck', name: 'Social Handle Availability', desc: 'Periksa ketersediaan nama pengguna di berbagai platform publik.', cat: 'Others', icon: 'ri-user-search-line' }
+        ];
+
+        // State Global
+        let currentAuthMode = 'login';
+        let isGuest = false;
+        let currentFilter = 'all';
+        let searchQuery = '';
+        let favorites = JSON.parse(localStorage.getItem('spyhub_favs') || '[]');
+        let activeToolModalId = null;
+        let isAudioPlaying = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            runIntroSequence();
+            updateFavCounters();
+            renderTools();
+            setupSearch();
+            setupKeyboardShortcuts();
+        });
+
+        // 1. SEQUENCE INTRO ANIMASI MASUK -> AUTH LOBBY
+        function runIntroSequence() {
+            const splash = document.getElementById('splashScreen');
+            const auth = document.getElementById('authLobby');
+            const mainApp = document.getElementById('mainAppWrapper');
+
+            setTimeout(() => {
+                splash.classList.add('hide');
+
+                const sessionUser = localStorage.getItem('spyhub_user');
+                const sessionType = localStorage.getItem('spyhub_user_type');
+
+                if (sessionUser && sessionType === 'registered') {
+                    isGuest = false;
+                    setSessionUser(sessionUser);
+                    updateGuestUI();
+                    mainApp.classList.add('visible');
+                    showToast(`Sesi aktif dipulihkan: @${sessionUser}`);
+                } else if (sessionUser && sessionType === 'guest') {
+                    isGuest = true;
+                    setSessionUser(sessionUser);
+                    updateGuestUI();
+                    mainApp.classList.add('visible');
+                } else {
+                    auth.classList.remove('hide');
+                }
+            }, 2350);
+        }
+
+        // 2. OTENTIKASI & HAK AKSES
+        function switchAuthTab(mode) {
+            currentAuthMode = mode;
+            const tabLogin = document.getElementById('tabLoginBtn');
+            const tabRegister = document.getElementById('tabRegisterBtn');
+            const titleText = document.getElementById('authTitleText');
+            const subText = document.getElementById('authSubText');
+            const confirmGroup = document.getElementById('confirmPassGroup');
+            const submitBtn = document.getElementById('authSubmitBtn');
+
+            if (mode === 'login') {
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+                titleText.textContent = 'Masuk ke SpyHub';
+                subText.textContent = 'Wajib punya akun untuk mencoba dan menjalankan 50+ tools';
+                confirmGroup.style.display = 'none';
+                document.getElementById('authConfirmPassword').removeAttribute('required');
+                submitBtn.innerHTML = `<span>Masuk ke Dashboard</span><i class="ri-arrow-right-line"></i>`;
+            } else {
+                tabRegister.classList.add('active');
+                tabLogin.classList.remove('active');
+                titleText.textContent = 'Daftar Akun Baru';
+                subText.textContent = 'Daftarkan akun untuk akses tak terbatas seluruh fitur tools';
+                confirmGroup.style.display = 'flex';
+                document.getElementById('authConfirmPassword').setAttribute('required', 'true');
+                submitBtn.innerHTML = `<span>Daftarkan Akun & Buka Akses</span><i class="ri-user-add-line"></i>`;
+            }
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('authUsername').value.trim();
+            const password = document.getElementById('authPassword').value;
+            const confirmPass = document.getElementById('authConfirmPassword').value;
+
+            if (!username || !password) {
+                showToast('Mohon isi seluruh formulir');
+                return;
+            }
+
+            if (currentAuthMode === 'register') {
+                if (password !== confirmPass) {
+                    showToast('Konfirmasi kata sandi tidak cocok!');
+                    return;
+                }
+                showToast(`Akun @${username} berhasil dibuat! Akses tools aktif.`);
+            } else {
+                showToast(`Selamat datang kembali, @${username}!`);
+            }
+
+            isGuest = false;
+            localStorage.setItem('spyhub_user', username);
+            localStorage.setItem('spyhub_user_type', 'registered');
+            setSessionUser(username);
+            updateGuestUI();
+            transitionToDashboard();
+        }
+
+        function enterAsGuest() {
+            isGuest = true;
+            const guestId = 'Tamu_' + Math.floor(100 + Math.random() * 900);
+            localStorage.setItem('spyhub_user', guestId);
+            localStorage.setItem('spyhub_user_type', 'guest');
+            setSessionUser(guestId);
+            updateGuestUI();
+            showToast('Masuk Mode Tamu: Anda hanya bisa melihat katalog');
+            transitionToDashboard();
+        }
+
+        function updateGuestUI() {
+            const guestBanner = document.getElementById('guestBanner');
+            if (isGuest) {
+                guestBanner.classList.add('active');
+            } else {
+                guestBanner.classList.remove('active');
+            }
+        }
+
+        function openAuthModalForRegister() {
+            const mainApp = document.getElementById('mainAppWrapper');
+            const auth = document.getElementById('authLobby');
+            mainApp.classList.remove('visible');
+            auth.classList.remove('hide');
+            switchAuthTab('register');
+        }
+
+        function setSessionUser(username) {
+            document.getElementById('navUsername').textContent = username + (isGuest ? ' (Tamu)' : '');
+        }
+
+        function transitionToDashboard() {
+            const auth = document.getElementById('authLobby');
+            const mainApp = document.getElementById('mainAppWrapper');
+
+            auth.classList.add('hide');
+            setTimeout(() => {
+                mainApp.classList.add('visible');
+                scrollToTop();
+            }, 300);
+        }
+
+        function logoutSession() {
+            localStorage.removeItem('spyhub_user');
+            localStorage.removeItem('spyhub_user_type');
+            isGuest = false;
+            const mainApp = document.getElementById('mainAppWrapper');
+            const auth = document.getElementById('authLobby');
+
+            mainApp.classList.remove('visible');
+            setTimeout(() => {
+                auth.classList.remove('hide');
+                document.getElementById('authPassword').value = '';
+                document.getElementById('authConfirmPassword').value = '';
+                showToast('Sesi ditutup. Silakan masuk kembali.');
+            }, 300);
+        }
+
+        function openProfileMenu() {
+            const user = localStorage.getItem('spyhub_user') || 'Tamu';
+            if (isGuest) {
+                showToast(`Status: Tamu (${user}) — Buat akun untuk mencoba tools.`);
+            } else {
+                showToast(`Akun Terdaftar: @${user} — Akses seluruh tools aktif.`);
+            }
+        }
+
+        // 3. BACKGROUND MUSIC AUDIO PLAYER
+        function toggleAudioPlayback() {
+            const audio = document.getElementById('siteAudio');
+            const btn = document.getElementById('musicToggleBtn');
+            const icon = document.getElementById('musicIcon');
+
+            if (isAudioPlaying) {
+                audio.pause();
+                isAudioPlaying = false;
+                btn.classList.remove('playing');
+                icon.className = 'ri-play-fill';
+                showToast('Musik dijeda');
+            } else {
+                audio.volume = 0.35;
+                audio.play().then(() => {
+                    isAudioPlaying = true;
+                    btn.classList.add('playing');
+                    icon.className = 'ri-pause-fill';
+                    showToast('Memutar musik latar SpyHub 2.0 🎵');
+                }).catch(err => {
+                    console.log('Autoplay constraint:', err);
+                    showToast('Klik sekali lagi untuk memutar audio');
+                });
+            }
+        }
+
+        // 4. SPYHUB ASSISTANT BOT (AI WEB GUIDE)
+        function toggleSpybot() {
+            const botWin = document.getElementById('spybotWindow');
+            botWin.classList.toggle('open');
+            if (botWin.classList.contains('open')) {
+                document.getElementById('spybotInput').focus();
+            }
+        }
+
+        function handleBotKey(e) {
+            if (e.key === 'Enter') {
+                sendSpybotMessage();
+            }
+        }
+
+        function sendSpybotMessage() {
+            const input = document.getElementById('spybotInput');
+            const query = input.value.trim();
+            if (!query) return;
+
+            appendBotUserMessage(query);
+            input.value = '';
+
+            setTimeout(() => {
+                processBotAnswer(query);
+            }, 400);
+        }
+
+        function askSpybotPreset(question) {
+            appendBotUserMessage(question);
+            setTimeout(() => {
+                processBotAnswer(question);
+            }, 350);
+        }
+
+        function appendBotUserMessage(text) {
+            const container = document.getElementById('spybotMessages');
+            const div = document.createElement('div');
+            div.className = 'user-msg';
+            div.textContent = text;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function appendBotReply(htmlText) {
+            const container = document.getElementById('spybotMessages');
+            const div = document.createElement('div');
+            div.className = 'bot-msg';
+            div.innerHTML = htmlText;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function processBotAnswer(query) {
+            const q = query.toLowerCase();
+            let reply = '';
+
+            if (q.includes('apa itu') || q.includes('tentang') || q.includes('spyhub')) {
+                reply = '<strong>SpyHub 2.0</strong> adalah platform web utilities all-in-one yang menyediakan <strong>54 web tools gratis</strong> untuk developer, productivity, data converter, generator, dan utilities harian tanpa iklan dan tanpa pelacakan pengguna.';
+            } else if (q.includes('akun') || q.includes('daftar') || q.includes('login') || q.includes('tamu')) {
+                reply = 'Di SpyHub 2.0, <strong>kamu wajib mendaftar akun</strong> agar bisa mencoba dan menjalankan setiap tools. Mode tamu (guest) hanya diperbolehkan untuk melihat-lihat katalog dan deskripsi.';
+            } else if (q.includes('kategori') || q.includes('katalog') || q.includes('berapa')) {
+                reply = 'SpyHub memiliki <strong>7 Kategori Utama</strong>:<br>• <strong>Productivity (8)</strong>: Markdown, Timer, Word Count, Notes.<br>• <strong>Developer (11)</strong>: JSON Formatter, Hash, JWT, RegEx.<br>• <strong>Converter (9)</strong>: Base64, CSV-to-JSON, Hex, Epoch.<br>• <strong>Generator (9)</strong>: QR Code, Passwords, UUID, WhatsApp Direct.<br>• <strong>Utilities (11)</strong>: Uptime, Image Scaler, MP3 Cut.<br>• <strong>Entertainment (4)</strong> & <strong>Others (2)</strong>.';
+            } else if (q.includes('aman') || q.includes('privasi') || q.includes('kamera') || q.includes('lacak')) {
+                reply = 'Sangat aman! Seluruh modul kamera dan pelacak lokasi/IP invasif <strong>telah dihapus 100%</strong> dari SpyHub 2.0. Kami mengusung <em>Client-Side Execution</em> yang menjaga data Anda tetap di browser Anda sendiri.';
+            } else if (q.includes('musik') || q.includes('lagu') || q.includes('audio')) {
+                reply = 'Anda dapat memutar dan menjeda lagu latar kapan saja melalui tombol <strong>"Musik"</strong> di bar navigasi atas!';
+            } else {
+                reply = 'Saya bisa menjelaskan tentang <strong>Apa itu SpyHub</strong>, <strong>Kategori Tools</strong>, <strong>Ketentuan Akun</strong>, atau <strong>Fitur Privasi</strong>. Silakan pilih salah satu opsi cepat di atas!';
+            }
+
+            appendBotReply(reply);
+        }
+
+        // 5. TEMA DARK / LIGHT MODE
+        function initTheme() {
+            const savedTheme = localStorage.getItem('spyhub_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme') || 'dark';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('spyhub_theme', next);
+            updateThemeIcon(next);
+            showToast(`Mode beralih ke ${next === 'dark' ? 'Dark Mode' : 'Light Mode'}`);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('themeIcon');
+            if (theme === 'light') {
+                icon.className = 'ri-moon-line';
+            } else {
+                icon.className = 'ri-sun-line';
+            }
+        }
+
+        // 6. SEARCH BAR & FILTER
+        function setupSearch() {
+            const searchInput = document.getElementById('toolSearchInput');
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase().trim();
+                renderTools();
+            });
+        }
+
+        function focusSearch() {
+            const input = document.getElementById('toolSearchInput');
+            input.focus();
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function setupKeyboardShortcuts() {
+            window.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                    e.preventDefault();
+                    focusSearch();
+                }
+                if (e.key === 'Escape') {
+                    closeToolModal();
+                    document.getElementById('spybotWindow').classList.remove('open');
+                }
+            });
+        }
+
+        function setCategory(cat, element) {
+            currentFilter = cat;
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.getAttribute('data-cat') === cat);
+            });
+            renderTools();
+            if (!element) {
+                document.getElementById('catalogSection').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function handleNavClick(view, btnElement) {
+            if (btnElement) {
+                document.querySelectorAll('.nav-links .nav-btn').forEach(b => b.classList.remove('active'));
+                btnElement.classList.add('active');
+            }
+
+            if (view === 'home') {
+                currentFilter = 'all';
+                searchQuery = '';
+                document.getElementById('toolSearchInput').value = '';
+                setCategory('all');
+                scrollToTop();
+            } else if (view === 'all') {
+                currentFilter = 'all';
+                setCategory('all');
+                document.getElementById('catalogSection').scrollIntoView({ behavior: 'smooth' });
+            } else if (view === 'favorites') {
+                currentFilter = 'favorites';
+                document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+                renderTools();
+                document.getElementById('catalogSection').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // 7. FAVORITES SYSTEM
+        function toggleFavorite(toolId, event) {
+            event.stopPropagation();
+            const index = favorites.indexOf(toolId);
+            if (index > -1) {
+                favorites.splice(index, 1);
+                showToast('Dihapus dari daftar favorit');
+            } else {
+                favorites.push(toolId);
+                showToast('Ditambahkan ke favorit');
+            }
+            localStorage.setItem('spyhub_favs', JSON.stringify(favorites));
+            updateFavCounters();
+            renderTools();
+        }
+
+        function updateFavCounters() {
+            const count = favorites.length;
+            document.getElementById('favCounter').textContent = count;
+            document.getElementById('favCounterMobile').textContent = count;
+        }
+
+        // 8. RENDER TOOLS GRID
+        function renderTools() {
+            const grid = document.getElementById('toolsGrid');
+            const empty = document.getElementById('emptyState');
+            const counter = document.getElementById('catalogCounter');
+
+            let filtered = TOOLS_DATA.filter(tool => {
+                const matchCat = (currentFilter === 'all') 
+                    ? true 
+                    : (currentFilter === 'favorites' ? favorites.includes(tool.id) : tool.cat === currentFilter);
+                
+                const matchSearch = searchQuery === '' || 
+                    tool.name.toLowerCase().includes(searchQuery) || 
+                    tool.desc.toLowerCase().includes(searchQuery) ||
+                    tool.cat.toLowerCase().includes(searchQuery);
+
+                return matchCat && matchSearch;
+            });
+
+            counter.textContent = `Menampilkan ${filtered.length} dari ${TOOLS_DATA.length} tools`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            grid.innerHTML = filtered.map(tool => {
+                const isFav = favorites.includes(tool.id);
+                return `
+                    <div class="tool-card" onclick="openToolModal('${tool.id}')">
+                        <div class="tool-card-head">
+                            <div class="tool-icon-wrapper">
+                                <i class="${tool.icon}"></i>
+                            </div>
+                            <button class="fav-star-btn ${isFav ? 'active' : ''}" 
+                                onclick="toggleFavorite('${tool.id}', event)" 
+                                title="${isFav ? 'Hapus favorit' : 'Simpan favorit'}">
+                                <i class="${isFav ? 'ri-star-fill' : 'ri-star-line'}"></i>
+                            </button>
+                        </div>
+                        <div class="tool-card-body">
+                            <h4>${tool.name}</h4>
+                            <p>${tool.desc}</p>
+                        </div>
+                        <div class="tool-card-foot">
+                            <span class="tool-cat-tag">${tool.cat}</span>
+                            <span class="tool-run-btn">${isGuest ? 'Lihat Detail' : 'Buka'} <i class="ri-arrow-right-s-line"></i></span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 9. MODAL DETAIL & PEMBATASAN AKSES TAMU
+        function openToolModal(toolId) {
+            const tool = TOOLS_DATA.find(t => t.id === toolId);
+            if (!tool) return;
+
+            activeToolModalId = toolId;
+            document.getElementById('modalToolIcon').innerHTML = `<i class="${tool.icon}"></i>`;
+            document.getElementById('modalToolCat').textContent = tool.cat.toUpperCase();
+            document.getElementById('modalToolTitle').textContent = tool.name;
+            document.getElementById('modalToolDesc').textContent = tool.desc;
+
+            const metaBox = document.getElementById('modalMetaBox');
+            const metaText = document.getElementById('modalMetaText');
+            const launchBtn = document.getElementById('modalLaunchBtn');
+
+            if (isGuest) {
+                metaBox.className = 'modal-meta-box warning';
+                metaBox.querySelector('i').className = 'ri-lock-2-line';
+                metaText.innerHTML = '<strong>Akses Dibatasi:</strong> Akun tamu hanya bisa membaca detail. Wajib daftar/masuk untuk mencoba tools ini.';
+                launchBtn.innerHTML = '<i class="ri-user-add-line"></i> Daftar Akun untuk Mencoba';
+            } else {
+                metaBox.className = 'modal-meta-box';
+                metaBox.querySelector('i').className = 'ri-information-line';
+                metaText.textContent = 'Akses penuh aktif. Tool siap diluncurkan ke workspace kerja.';
+                launchBtn.innerHTML = '<i class="ri-play-line"></i> Buka Workspace';
+            }
+
+            const modal = document.getElementById('toolModal');
+            modal.classList.add('open');
+        }
+
+        function closeToolModal(event) {
+            if (event && event.target !== document.getElementById('toolModal') && !event.target.classList.contains('ri-close-line')) {
+                return;
+            }
+            document.getElementById('toolModal').classList.remove('open');
+            activeToolModalId = null;
+        }
+
+        function launchToolAction() {
+            if (isGuest) {
+                // Tamu tidak diizinkan mencoba tool, alihkan ke form registrasi
+                closeToolModal();
+                showToast('Wajib bikin akun terlebih dahulu untuk mencoba tools!');
+                openAuthModalForRegister();
+                return;
+            }
+
+            const tool = TOOLS_DATA.find(t => t.id === activeToolModalId);
+            if (tool) {
+                showToast(`Workspace "${tool.name}" siap dihubungkan pada Tahap 2!`);
+            }
+            closeToolModal();
+        }
+
+        // 10. MOBILE MENU & UTILITIES
+        function toggleMobileMenu() {
+            const drawer = document.getElementById('mobileDrawer');
+            const icon = document.getElementById('mobileMenuIcon');
+            const isOpen = drawer.classList.toggle('open');
+            icon.className = isOpen ? 'ri-close-line' : 'ri-menu-4-line';
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('uiToast');
+            const msgSpan = document.getElementById('toastMsg');
+            msgSpan.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3200);
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
